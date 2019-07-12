@@ -1,0 +1,3 @@
+[submodule "ib_pseudocode_python"]
+	path = ib_pseudocode_python
+	url = https://github.com/classroomtechtools/ib_pseudocode_python.git
