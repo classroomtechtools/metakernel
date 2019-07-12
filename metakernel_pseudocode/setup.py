@@ -9,7 +9,7 @@ setup(name='metakernel_pseudocode',
       author='Adam Morris',
       author_email='classroomtechtools.ctt@gmail.com',
       py_modules=['metakernel_pseudocode'],
-      install_requires=['metakernel', 'pygments', 'ib_pseudocode_python @ git+ssh://git@github.com/classroomtechtools/ib_pseudocode_python@master'],
+      install_requires=['metakernel', 'pygments'],
       classifiers = [
           'Framework :: IPython',
           'License :: OSI Approved :: BSD License',
