@@ -49,7 +49,7 @@ function(CodeMirror, simple) {
                     token: "string"},
                 {regex: /[()\\[\\]]/,
                     token: "bracket"},
-                {regex: /\\b(?:hasNext|addItem|getNext|push|pop|isEmpty|dequeue|enqueue)\\b/,
+                {regex: /\\b(?:hasNext|addItem|getNext|resetNext|push|pop|isEmpty|dequeue|enqueue)\\b/,
                     token: "attribute"},
                 {regex: /\\bfrom_.*?\\b/,
                     token: "attribute"}
