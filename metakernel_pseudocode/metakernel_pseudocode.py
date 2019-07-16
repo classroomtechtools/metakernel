@@ -31,7 +31,7 @@ function(CodeMirror, simple) {
             start: [
                 {regex: /%%transpile/,
                     token: "comment"},
-                {regex: /\\b(?:if|else|then|while|loop|end|from|to|until)\\b/,
+                {regex: /\\b(?:if|else|then|while|loop|end|from|to|until|func)\\b/,
                    token: "keyword"},
                 {regex: /\\b(?:output|Stack|Collection|Array)\\b/,
                    token: "atom"},
