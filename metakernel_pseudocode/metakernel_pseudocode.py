@@ -21,37 +21,47 @@ class PseudocodeKernel(MetaKernel):
         'name': 'metakernel_pseudocode'
     }
 
-    kernel_javascript = """
+    kernel_javascript = r"""
 define(
 ['codemirror/lib/codemirror', 'codemirror/addon/mode/simple'],
-function(CodeMirror, simple) {
+function(CodeMirror) {
   return {
     onload: function(){
         CodeMirror.defineSimpleMode('ib_pseudocode', {
             start: [
                 {regex: /%%transpile/,
                     token: "comment"},
-                {regex: /\\b(?:if|else|then|while|loop|end|from|to|until|func)\\b/,
-                   token: "keyword"},
-                {regex: /\\b(?:output|Stack|Collection|Array)\\b/,
-                   token: "atom"},
-                {regex: /\\/\\/.*/,
-                    token: "comment"},
-                {regex: /\\b(?:NOT|div|mod)\\b/,
-                    token: "operator"},
-                {regex: /[.,=≠<>+\\*-]/,
-                    token: "operator"},
-                {regex: /\\b[A-Z_]+\\b/,
-                    token: "string-2"},
-                {regex: /\\b[0-9.]+\\b/,
-                    token: "number"},
-                {regex: /".*?"/,
+                {regex: /".*?"/,  // string
                     token: "string"},
-                {regex: /[()\\[\\]]/,
+                {regex: /\b(?:if|else|then|while|loop|from|to|until)\b/,
+                   token: "keyword"},
+                {regex: /\bend(?! sub)\b/,
+                    token: "keyword"},
+                {regex: /\bsub\b/,
+                    token: "def"},
+                {regex: /\bend sub\b/,
+                   token: "def"},
+                {regex: /\breturn\b/,
+                   token: "meta"},
+                {regex: /\b(?:output|out|Stack|Collection|Queue|Array)\b/,
+                   token: "atom"},
+                {regex: /\/\/.*/,
+                    token: "comment"},
+                {regex: /\b(?:NOT|div|mod)\b/,
+                    token: "operator"},
+                {regex: /[.,=≠<>+\*-]/,
+                    token: "operator"},
+                {regex: /\b[0-9.]+(?![A-Z_]+)\b/,  // number
+                    token: "string"},
+                {regex: /\b(?:true|false)\b/,
+                    token: "string"},
+                {regex: /\b[A-Z0-9_]+\b/,  // variable
+                    token: "string-2"},
+                {regex: /[()\[\]]/,
                     token: "bracket"},
-                {regex: /\\b(?:hasNext|addItem|getNext|resetNext|push|pop|isEmpty|dequeue|enqueue)\\b/,
+                {regex: /\b(?:hasNext|addItem|getNext|resetNext|push|pop|isEmpty|dequeue|enqueue)\b/,
                     token: "attribute"},
-                {regex: /\\bfrom_.*?\\b/,
+                {regex: /\b(?:from_x_integers|from_list|from_x_characters|from_file).*?\b/,
                     token: "attribute"}
             ]
         });
