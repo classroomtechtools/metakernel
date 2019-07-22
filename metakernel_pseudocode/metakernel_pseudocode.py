@@ -9,65 +9,82 @@ class PseudocodeKernel(MetaKernel):
     implementation = 'IB_Pseudocode Python'
     implementation_version = '0.7'
     language_version = '0.1'
-    language_info = {'name': 'ib_pseudocode', 'file_extension': '.pseudo', 'mimetype': 'text/plain'}
-    banner = "IB PseudoCode kernel - transpiles to Python and executes"
+    language_info = {'name': 'vanilla_python', 'file_extension': '.pseudo', 'mimetype': 'text/plain'}
+    banner = "Vanilla Python kernel - transpiles to Python and executes"
     transpiler = Transpiler()
 
     kernel_json = {
         'argv': [
             sys.executable, '-m', 'metakernel_pseudocode', '-f', '{connection_file}'],
-        'display_name': 'IB Pseudocode',
-        'language': 'ib_pseudocode',
+        'display_name': 'Vanilla Python',
+        'language': 'vanilla_python',
         'name': 'metakernel_pseudocode'
     }
 
     kernel_javascript = r"""
 define(
-['codemirror/lib/codemirror', 'codemirror/addon/mode/simple'],
+['codemirror/lib/codemirror', 'codemirror/addon/mode/simple', 'codemirror/addon/mode/multiplex'],
 function(CodeMirror) {
-  return {
-    onload: function(){
-        CodeMirror.defineSimpleMode('ib_pseudocode', {
-            start: [
-                {regex: /%%transpile/,
-                    token: "comment"},
-                {regex: /".*?"/,  // string
-                    token: "string"},
-                {regex: /\b(?:if|else|then|while|loop|from|to|until)\b/,
-                   token: "keyword"},
-                {regex: /\bend(?! sub)\b/,
-                    token: "keyword"},
-                {regex: /\bsub\b/,
-                    token: "def"},
-                {regex: /\bend sub\b/,
-                   token: "def"},
-                {regex: /\breturn\b/,
-                   token: "meta"},
-                {regex: /\b(?:output|out|Stack|Collection|Queue|Array)\b/,
-                   token: "atom"},
-                {regex: /\/\/.*/,
-                    token: "comment"},
-                {regex: /\b(?:NOT|div|mod)\b/,
-                    token: "operator"},
-                {regex: /[.,=≠<>+\*-]/,
-                    token: "operator"},
-                {regex: /\b[0-9.]+(?![A-Z_]+)\b/,  // number
-                    token: "string"},
-                {regex: /\b(?:true|false)\b/,
-                    token: "string"},
-                {regex: /\b[A-Z0-9_]+\b/,  // variable
-                    token: "string-2"},
-                {regex: /[()\[\]]/,
-                    token: "bracket"},
-                {regex: /\b(?:hasNext|addItem|getNext|resetNext|push|pop|isEmpty|dequeue|enqueue)\b/,
-                    token: "attribute"},
-                {regex: /\b(?:from_x_integers|from_list|from_x_characters|from_file).*?\b/,
-                    token: "attribute"}
-            ]
-        });
-        console.log('loaded');
-    }
-  };
+
+    CodeMirror.defineSimpleMode('ib_pseudocode_top', {
+        start: [
+            {regex: /%%transpile/,
+                token: "comment"},
+            {regex: /".*?"/,  // string
+                token: "string"},
+            {regex: /\b(?:if|else|then|while|loop|from|to|until)\b/,
+               token: "keyword"},
+            {regex: /\bend(?! sub)\b/,
+                token: "keyword"},
+            {regex: /\bsub\b/,
+                token: "def"},
+            {regex: /\bend sub\b/,
+               token: "def"},
+            {regex: /\breturn\b/,
+               token: "meta"},
+            {regex: /\b(?:output|out|Stack|Collection|Queue|Array)\b/,
+               token: "atom"},
+            {regex: /#.*/,
+                token: "comment"},
+            {regex: /\b(?:NOT|div|mod|AND|OR)\b/,
+                token: "operator"},
+            {regex: /[.,=≠<>+\*-]/,
+                token: "operator"},
+            {regex: /\b[0-9.]+(?![A-Z_]+)\b/,  // number
+                token: "string"},
+            {regex: /\b(?:true|false)\b/,
+                token: "string"},
+            {regex: /\b[A-Z0-9_]+\b/,  // variable
+                token: "string-2"},
+            {regex: /[()\[\]]/,
+                token: "bracket"},
+            {regex: /\b(?:hasNext|addItem|getNext|resetNext|push|pop|isEmpty|dequeue|enqueue)\b/,
+                token: "attribute"},
+            {regex: /\b(?:from_x_integers|from_list|from_x_characters|from_file).*?\b/,
+                token: "attribute"}
+        ]
+    });
+    return {
+        onload: function(){
+            CodeMirror.defineMode("ib_pseudocode", function (config) {
+                return CodeMirror.multiplexingMode(
+                    CodeMirror.getMode(config, "ib_pseudocode_top"),
+                    {
+                        open: '###',
+                        close: '###',
+                        delimStyle: 'comment',
+                        mode: CodeMirror.getMode(config, "plain")
+                    },
+                    {
+                        open: '# py:',
+                        close: '# vanilla:',
+                        delimStyle: 'comment',
+                        mode: CodeMirror.getMode(config, "python")
+                    }
+                )
+            });
+        }
+    };
 });
 """
 
