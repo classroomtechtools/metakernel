@@ -6,19 +6,19 @@ from io import StringIO
 
 
 class PseudocodeKernel(MetaKernel):
-    implementation = 'IB_Pseudocode Python'
+    implementation = 'Vanilla Python'
     implementation_version = '0.7'
     language_version = '0.1'
-    language_info = {'name': 'vanilla_python', 'file_extension': '.pseudo', 'mimetype': 'text/plain'}
+    language_info = {'name': 'vanilla_python', 'file_extension': '.vanilla', 'mimetype': 'text/plain'}
     banner = "Vanilla Python kernel - transpiles to Python and executes"
     transpiler = Transpiler()
 
     kernel_json = {
         'argv': [
-            sys.executable, '-m', 'metakernel_pseudocode', '-f', '{connection_file}'],
+            sys.executable, '-m', 'metakernel_vanilla_python', '-f', '{connection_file}'],
         'display_name': 'Vanilla Python',
         'language': 'vanilla_python',
-        'name': 'metakernel_pseudocode'
+        'name': 'vanilla_python'
     }
 
     kernel_javascript = r"""
@@ -66,7 +66,7 @@ function(CodeMirror) {
     });
     return {
         onload: function(){
-            CodeMirror.defineMode("ib_pseudocode", function (config) {
+            CodeMirror.defineMode("vanilla_python", function (config) {
                 return CodeMirror.multiplexingMode(
                     CodeMirror.getMode(config, "ib_pseudocode_top"),
                     {
@@ -116,13 +116,20 @@ function(CodeMirror) {
                 self.Error('\n'.join(result))
         else:
             # Output whatever we got in stout as the output cell
-            message = {"metadata": {}, "data": {'text/plain': "\n".join(result)}, "execution_count": self.execution_count}
+            message = {
+                "metadata": {},
+                "data": {
+                    'text/plain': "\n".join(result)
+                },
+                "execution_count": self.execution_count
+            }
             self.send_response(self.iopub_socket, 'execute_result', message)
 
-        return {'status': 'ok',
-                'execution_count': self.execution_count,
-                'payload': [],
-                'user_expressions': {},
+        return {
+            'status': 'ok',
+            'execution_count': self.execution_count,
+            'payload': [],
+            'user_expressions': {},
         }
 
 
